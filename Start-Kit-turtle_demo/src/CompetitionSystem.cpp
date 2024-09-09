@@ -77,8 +77,14 @@ void BaseSystem::move(vector<Action> &actions) {
   std::cout << std::endl;
 
   if (simulate_each_step) {
-    executor->send_plan(curr_states, next_states);
-    curr_states = executor->get_agent_locations(timestep);
+    vector<State> pos_before = executor->get_agent_locations(timestep);
+    if (pos_before == curr_states) {
+      executor->send_plan(curr_states, next_states);
+      curr_states = executor->get_agent_locations(timestep);
+      attempts=0;
+    } else {
+      attempts+=1;
+    }
   } else {
     curr_states = next_states;
   }
