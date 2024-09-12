@@ -14,8 +14,9 @@ class BaseSystem {
 public:
   int num_tasks_reveal = 1;
   Logger *logger = nullptr;
-    int attempts = 0;
-
+  int attempts = 0;
+  vector<Action> previous;
+  
   BaseSystem(Grid &grid, MAPFPlanner *planner, ActionModelWithRotate *model,
              ActionExecutor *executor)
       : map(grid), planner(planner), env(planner->env), model(model),

@@ -223,9 +223,8 @@ void BaseSystem::simulate(int simulation_time) {
   for (; timestep < simulation_time;) {
 
     sync_shared_env();
-
     auto start = std::chrono::steady_clock::now();
-    vector<Action> actions = plan();
+    vector<Action> actions = attempts == 0 || attempts > 10 ? plan() : previous;
     auto end = std::chrono::steady_clock::now();
 
     if (!planner_movements[0].empty() &&
@@ -247,6 +246,7 @@ void BaseSystem::simulate(int simulation_time) {
     // validate, simulate and book keeping completed tasks
     move(actions);
     task_book_keeping(actions);
+    previous = actions;
 
     if (all_tasks_complete()) {
       break;
