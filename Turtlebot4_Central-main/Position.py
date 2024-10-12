@@ -56,7 +56,7 @@ class Position:
         return hash((self.x, self.y))
 
     def __eq__(self, other) -> bool:
-        return int(0.5 + self.x) == int(0.5 + other.x) and int(0.5 + self.y) == int(0.5 + other.y)
+        return int(0.5 + self.x) == int(0.5 + other.x) and int(-0.5 + self.y) == int(-0.5 + other.y)
 
     def location(self) -> Tuple[int, int]:
         """
@@ -68,4 +68,5 @@ class Position:
         """
         assert isinstance(self.x, float)  or isinstance(self.x, int), f"{self} is weird"
         assert isinstance(self.y, float) or isinstance(self.y, int), f"{self} is weird"
-        return (int(self.x + 0.5), int(self.y + 0.5))
+        #HERE X MUST BE 0 OR POSITIVE AND Y MUST BE 0 OR NEGATIVE
+        return (int(self.x + 0.5), int(self.y - 0.5))
