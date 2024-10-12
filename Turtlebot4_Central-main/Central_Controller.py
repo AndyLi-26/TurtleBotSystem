@@ -29,7 +29,7 @@ class CentralController(BaseHTTPRequestHandler):
     """
     request_version = "HTTP/1.1"
 
-    execution_policy: ExecutionPolicy | OnlineExecutionPolicy = UnitExecutionPolicy(1)
+    execution_policy: ExecutionPolicy | OnlineExecutionPolicy = OnlineMCP(3)
 
     def do_GET(self):
         """
@@ -97,11 +97,11 @@ class CentralController(BaseHTTPRequestHandler):
                     locations,
                     all_ready,
                 ) = CentralController.execution_policy.get_agent_locations()
-                if not all_ready:
-                    self.send_response(404)
-                    self.end_headers()
-                    return
-
+                # print(locations, "LOC")
+                # if not all_ready:
+                #     self.send_response(404)
+                #     self.end_headers()
+                #     return
 
                 message = {}
 
@@ -189,7 +189,7 @@ class CentralController(BaseHTTPRequestHandler):
                             [
                                 Position(
                                     int(0.5 + state["x"]),
-                                    int(0.5 + state["y"]),
+                                    int(-0.5 + state["y"]),
                                     int(0.5 + state["theta"]),
                                 ),
                             ],
