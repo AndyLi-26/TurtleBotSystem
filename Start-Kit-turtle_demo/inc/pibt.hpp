@@ -176,7 +176,7 @@ inline Action getAction(State& prev, int next_loc, SharedEnvironment* env){
 	}
 	std::cout << prev << "|" << std::to_string(next_loc) << std::endl;
 	assert(false);
-	// return Action::W;
+	return Action::W;
 
 }
 
