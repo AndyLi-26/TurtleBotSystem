@@ -108,7 +108,7 @@ private:
   int rows_;
   int cols_;
 
-  const string hostname = "192.168.0.171";
+  const string hostname = "192.168.0.115";
   const string port =
       "8080"; // hsotname and port the central controller has a TCP listener on
   boost::asio::io_service ioc_;
