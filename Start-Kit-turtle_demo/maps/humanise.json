@@ -1,0 +1,9 @@
+{
+    "mapFile": "humanise.map",
+    "agentFile": "humanise.agents",
+    "teamSize": 2,
+    "taskFile": "humanise.tasks",
+    "numTasksReveal": 1,
+    "taskAssignmentStrategy": "roundrobin_fixed"
+}
+
