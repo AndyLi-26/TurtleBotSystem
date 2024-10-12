@@ -77,14 +77,14 @@ void BaseSystem::move(vector<Action> &actions) {
   std::cout << std::endl;
 
   if (simulate_each_step) {
-    vector<State> pos_before = executor->get_agent_locations(timestep);
-    if (pos_before == curr_states) {
+    // vector<State> pos_before = executor->get_agent_locations(timestep);
+    // if (pos_before == curr_states) {
       executor->send_plan(curr_states, next_states);
       curr_states = executor->get_agent_locations(timestep);
-      attempts=0;
-    } else {
-      attempts+=1;
-    }
+    //   attempts=0;
+    // } else {
+    //   attempts+=1;
+    // }
   } else {
     curr_states = next_states;
   }
@@ -223,8 +223,9 @@ void BaseSystem::simulate(int simulation_time) {
   for (; timestep < simulation_time;) {
 
     sync_shared_env();
+
     auto start = std::chrono::steady_clock::now();
-    vector<Action> actions = attempts == 0 || attempts > 10 ? plan() : previous;
+    vector<Action> actions = plan();
     auto end = std::chrono::steady_clock::now();
 
     if (!planner_movements[0].empty() &&
@@ -246,7 +247,6 @@ void BaseSystem::simulate(int simulation_time) {
     // validate, simulate and book keeping completed tasks
     move(actions);
     task_book_keeping(actions);
-    previous = actions;
 
     if (all_tasks_complete()) {
       break;
