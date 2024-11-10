@@ -5,6 +5,7 @@
 #include <functional>
 #include <unistd.h>
 
+int TIME_LIMIT = 1250;
 using json = nlohmann::ordered_json;
 
 bool BaseSystem::all_tasks_complete() {
@@ -79,7 +80,9 @@ void BaseSystem::move(vector<Action> &actions) {
   if (simulate_each_step) {
     // vector<State> pos_before = executor->get_agent_locations(timestep);
     // if (pos_before == curr_states) {
+      auto start = std::chrono::steady_clock::now();
       executor->send_plan(curr_states, next_states);
+      while (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()-start).count() <= TIME_LIMIT) {} 
       curr_states = executor->get_agent_locations(timestep);
     //   attempts=0;
     // } else {
