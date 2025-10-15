@@ -3,35 +3,45 @@ import http.client
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
+
+POSITIONS = {
+    "1":{"x":1,"y":0,"theta":0}, 
+    "2":{"x":6,"y":0,"theta":0},
+    "3":{"x":4,"y":4,"theta":0} 
+}
+
 class LocationHanderler(BaseHTTPRequestHandler):
     '''
     Class that handles the POST and GET requests from Unity.
     From POST requests moves robot that this server is running on
     '''
-    positions = {}
+    positions = POSITIONS
+
     def do_GET(self):
         '''
         Handles GET requests
         '''
-        print("received")
         data = json.dumps(self.positions)
-        self.wfile.write(data)
         self.send_response(200)
         self.send_header("Content-Length", f"{len(data)}")
         self.send_header("Content-type", "application/json")
         self.end_headers()
-        self.wfile.write("{}")
+        self.wfile.write(bytes(data,'UTF-8'))
 
     def do_POST(self):
         '''
         Handles POST requests
         '''
-        data = json.loads(self.rfile.read())
-        self.positions[data["id"]] = {'x':data["x"],'y':data["y"],'theta':data["theta"]}
+        data = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))))
+        if "x" in data:
+            self.positions[data["id"]] | {'x':data["x"],'y':data["y"]}
+        if "status" in data:
+            self.positions[data["id"]] | {'status':data["status"]}
+        self.send_response(200)
 
 if __name__ == "__main__":
-    host_name: str = "118.138.113.89"
-    server_port: int = 8081
+    host_name: str = "192.168.1.124"
+    server_port: int = 8079
 
     server = ThreadingHTTPServer((host_name, server_port), LocationHanderler)
 
