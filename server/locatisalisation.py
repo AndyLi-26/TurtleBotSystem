@@ -5,9 +5,10 @@ from urllib.parse import parse_qs, urlparse
 
 
 POSITIONS = {
-    "1":{"x":1,"y":0,"theta":0}, 
-    "2":{"x":6,"y":0,"theta":0},
-    "3":{"x":4,"y":4,"theta":0} 
+    "r0":{"x":1,"y":0,"theta":0,"status":"STOPPED"}, 
+    "r1":{"x":6,"y":0,"theta":0,"status":"STOPPED"},
+    "r2":{"x":4,"y":4,"theta":0,"status":"STOPPED"},
+    "s3":{"x":4,"y":4,"theta":0,"status":"STOPPED"},
 }
 
 class LocationHanderler(BaseHTTPRequestHandler):
@@ -40,7 +41,7 @@ class LocationHanderler(BaseHTTPRequestHandler):
         self.send_response(200)
 
 if __name__ == "__main__":
-    host_name: str = "192.168.1.124"
+    host_name: str = "192.168.11.3"
     server_port: int = 8079
 
     server = ThreadingHTTPServer((host_name, server_port), LocationHanderler)

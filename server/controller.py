@@ -4,6 +4,7 @@ from time import sleep
 from math import atan, sqrt, pi
 import argparse
 import asyncio
+import aiohttp
 
 
 def get_args():
@@ -22,7 +23,6 @@ def get_args():
 AGENTS,LOCALISATION_IP,PRECISION,PATHS = get_args()
 print('Recieved configuration')
 CONS_LOCAL = http.client.HTTPConnection(LOCALISATION_IP)
-CONS_AGENTS = {i:http.client.HTTPConnection(AGENTS[i]) for i in AGENTS}
 timesteps = {i:1 for i in AGENTS}
 
 
@@ -34,7 +34,7 @@ def getPositions():
         print("check if valid GetRequest")
     return json.loads(r.read())
     
-async def main(agentId,pos):
+async def moveRobot(agentId,positions):
     timestep = timesteps[agentId]
     aPath = PATHS[agentId]
     if len(aPath) <= timestep:
@@ -63,20 +63,21 @@ async def main(agentId,pos):
     dist =  sqrt(((pos['x'] - aPath[timestep][0])**2) + ((pos['y'] - aPath[timestep][1])**2))
 
     print(f'moving {agentId} with distance = {dist} and theta = {theta}')
+    # j = json.dumps({"id": agentId, "theta": theta, "dist": dist})
+    print(AGENTS, agentId)
+    async with aiohttp.ClientSession(f"http://{AGENTS[agentId]}") as session:
+        async with session.post("/", json={"id": agentId, "theta": theta, "dist": dist}) as resp:
+            await resp.text()
+    # r = CONS_AGENTS[agentId].getresponse()
+    # data = json.loads(r.read())
 
-    CONS_AGENTS[agentId].request("POST","/","{\"id\": "+str(agentId)+",\"theta\": "+str(theta)+ ",\"dist\": "+str(dist)+"}")
-    r = CONS_AGENTS[agentId].getresponse()
-    data = json.loads(r.read())
-    CONS_AGENTS[agentId].close()
-
-    CONS_LOCAL.request("POST","/",json.dumps(pos | {"id":agentId,"status":data["status"]}))
+    CONS_LOCAL.request("POST","/",json.dumps(pos | {"id":agentId,"status":"STOPPED"}))
     CONS_LOCAL.close()
-        
 
-running = True
-while running:
-    positions = getPositions()
-    running = False
-    for agentId in AGENTS:
-        asyncio.create_task(main(agentId,positions))
-    sleep(0.2)
+async def main():
+    running = True
+    while running:
+        positions = getPositions()
+        await asyncio.gather(*[moveRobot(agentId,positions) for agentId in AGENTS])
+
+asyncio.run(main())
