@@ -6,8 +6,8 @@ from urllib.parse import parse_qs, urlparse
 
 POSITIONS = {
     "r0":{"x":1,"y":0,"theta":0,"status":"STOPPED"}, 
-    "r1":{"x":6,"y":0,"theta":0,"status":"STOPPED"},
-    "r2":{"x":4,"y":4,"theta":0,"status":"STOPPED"},
+    "r1":{"x":2,"y":0,"theta":0,"status":"STOPPED"},
+    "r2":{"x":3,"y":4,"theta":0,"status":"STOPPED"},
     "s3":{"x":4,"y":4,"theta":0,"status":"STOPPED"},
 }
 
@@ -34,11 +34,16 @@ class LocationHanderler(BaseHTTPRequestHandler):
         Handles POST requests
         '''
         data = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))))
-        if "x" in data:
-            self.positions[data["id"]] | {'x':data["x"],'y':data["y"]}
-        if "status" in data:
-            self.positions[data["id"]] | {'status':data["status"]}
+        for robot in data["robots"]:
+            self.positions[robot["id"]] = robot
+
+        print(self.positions)
         self.send_response(200)
+        self.send_header("Content-Type","application/json")
+        self.send_header("Content-Length","0")
+        self.end_headers()
+        self.wfile.write(bytes())
+
 
 if __name__ == "__main__":
     host_name: str = "192.168.11.3"
