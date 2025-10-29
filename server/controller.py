@@ -1,7 +1,7 @@
 import http.client
 import json
 from time import sleep
-from math import atan, sqrt, pi
+from math import atan, sqrt, pi, atan2
 import argparse
 import asyncio
 import aiohttp
@@ -41,8 +41,6 @@ async def moveRobot(agentId,positions):
         return
 
     pos = positions[agentId]
-    if pos['status'] != "STOPPED":
-        return
 
     if abs(pos['x'] - aPath[timestep - 1][0]) > PRECISION:
         print(f"turtlebot {agentId} has not reached goal")
@@ -59,7 +57,7 @@ async def moveRobot(agentId,positions):
     if run == 0:
         theta = pos['theta'] - pi
     else:
-        theta = pos['theta'] - atan(rise/run)
+        theta = pos['theta'] - atan2(rise, run)
     dist =  sqrt(((pos['x'] - aPath[timestep][0])**2) + ((pos['y'] - aPath[timestep][1])**2))
 
     print(f'moving {agentId} with distance = {dist} and theta = {theta}')
@@ -71,8 +69,8 @@ async def moveRobot(agentId,positions):
     # r = CONS_AGENTS[agentId].getresponse()
     # data = json.loads(r.read())
 
-    CONS_LOCAL.request("POST","/",json.dumps(pos | {"id":agentId,"status":"STOPPED"}))
-    CONS_LOCAL.close()
+    # CONS_LOCAL.request("POST","/",json.dumps(pos | {"id":agentId,"status":"STOPPED"}))
+    # CONS_LOCAL.close()
 
 async def main():
     running = True
