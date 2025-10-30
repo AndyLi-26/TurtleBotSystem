@@ -106,8 +106,8 @@ async def moveRobot(agentId: str, positions: dict[str, Pose]):
         return
     agentStatus[agentId] = "RUNNING"
 
-    if not scheduled(agentId, positions):
-        return
+    # if not scheduled(agentId, positions):
+    #     return
 
     # if abs(pos['x'] - aPath[timestep - 1][0]) > PRECISION:
     #     print(f"turtlebot {agentId} has not reached goal")
